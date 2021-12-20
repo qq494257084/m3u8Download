@@ -34,6 +34,8 @@ m3u8Download.setTimeoutMillisecond(10000L);
  m3u8Download.setLogLevel(Constant.DEBUG);
 //设置监听器间隔（单位：毫秒）
 m3u8Download.setInterval(500L);
+//如果需要的话设置http代理
+//m3u8Download.setProxy("172.50.60.3",8090);
 //添加监听器
 m3u8Download.addListener(new DownloadListener() {
     @Override
@@ -58,6 +60,9 @@ m3u8Download.start();
 </pre>
 
 <h2>更新日志</h2>
+
+<h4>2021.12.20</h4>
+* 增加代理设置
 
 <h4>2020.05.22</h4>
 * 解决获取链接问题

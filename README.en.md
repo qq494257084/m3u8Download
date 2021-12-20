@@ -34,6 +34,8 @@ m3u8Download.setTimeoutMillisecond(10000L);
  m3u8Download.setLogLevel(Constant.DEBUG);
 //set listener interval（ms）
 m3u8Download.setInterval(500L);
+//set http proxy if need
+//m3u8Download.setProxy("172.50.60.3",8090);
 //add listener to download
 m3u8Download.addListener(new DownloadListener() {
     @Override
@@ -58,6 +60,9 @@ m3u8Download.start();
 </pre>
 
 <h2>log</h2>
+
+<h4>2021.12.20</h4>
+* you can set http/socket proxy now
 
 <h4>2020.05.22</h4>
 * fix a bug that it can't correctly obtain a link
