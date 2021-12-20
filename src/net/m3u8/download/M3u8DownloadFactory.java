@@ -109,7 +109,6 @@ public class M3u8DownloadFactory {
          * 开始下载视频
          */
         public void start() {
-            setThreadCount(30);
             checkField();
             String tsUrl = getTsUrl();
             if (StringUtils.isEmpty(tsUrl))
