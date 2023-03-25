@@ -40,6 +40,7 @@ public class M3u8DownloadFactory {
     /**
      *
      * 解决java不支持AES/CBC/PKCS7Padding模式解密
+     * //FIXME Ref : Aes128DataSource use javax crypto https://github.com/google/ExoPlayer/blob/0106f02a25a71321f9948f5aa6fefeb3008e21ca/library/hls/src/main/java/com/google/android/exoplayer2/source/hls/Aes128DataSource.java#L75
      *
      */
     static {
@@ -201,7 +202,7 @@ public class M3u8DownloadFactory {
          */
         private void mergeTs() {
             try {
-                File file = new File(dir + FILESEPARATOR + fileName + ".mp4");
+                File file = new File(dir + Constant.FILESEPARATOR + fileName + ".mp4");
                 System.gc();
                 if (file.exists())
                     file.delete();
@@ -246,7 +247,7 @@ public class M3u8DownloadFactory {
                 int count = 1;
                 HttpURLConnection httpURLConnection = null;
                 //xy为未解密的ts片段，如果存在，则删除
-                File file2 = new File(dir + FILESEPARATOR + i + ".xy");
+                File file2 = new File(dir + Constant.FILESEPARATOR + i + ".xy");
                 if (file2.exists())
                     file2.delete();
                 OutputStream outputStream = null;
@@ -296,9 +297,10 @@ public class M3u8DownloadFactory {
                         if (bytes.length < available)
                             bytes = new byte[available];
                         inputStream1.read(bytes);
-                        File file = new File(dir + FILESEPARATOR + i + ".xyz");
+                        File file = new File(dir + Constant.FILESEPARATOR + i + ".xyz");
                         outputStream1 = new FileOutputStream(file);
                         //开始解密ts片段，这里我们把ts后缀改为了xyz，改不改都一样
+                        //FIXME Ref : Aes128DataSource use javax crypto https://github.com/google/ExoPlayer/blob/0106f02a25a71321f9948f5aa6fefeb3008e21ca/library/hls/src/main/java/com/google/android/exoplayer2/source/hls/Aes128DataSource.java#L75
                         byte[] decrypt = decrypt(bytes, available, key, iv, method);
                         if (decrypt == null)
                             outputStream1.write(bytes, 0, available);
@@ -351,11 +353,12 @@ public class M3u8DownloadFactory {
             String[] split = content.toString().split("\\n");
             String keyUrl = "";
             boolean isKey = false;
-            for (String s : split) {
+            for (String s : split) {//FIXME here can Ref : https://github.com/google/ExoPlayer/blob/release-v2/library/hls/src/main/java/com/google/android/exoplayer2/source/hls/playlist/HlsPlaylistParser.java
                 //如果含有此字段，则说明只有一层m3u8链接
                 if (s.contains("#EXT-X-KEY") || s.contains("#EXTINF")) {
                     isKey = true;
-                    keyUrl = DOWNLOADURL;
+                    keyUrl = DOWNLOADURL;//FIXME here need Ref : RFC-3986 ,https://juejin.cn/post/7122375055912206367?share_token=5f066f3c-121e-49a0-ae61-b397b40589e6
+                    //FIXME Ref : https://github.com/google/ExoPlayer/blob/0106f02a25a71321f9948f5aa6fefeb3008e21ca/library/common/src/main/java/com/google/android/exoplayer2/util/UriUtil.java#L69
                     break;
                 }
                 //如果含有此字段，则说明ts片段链接需要从第二个m3u8链接获取
@@ -365,7 +368,8 @@ public class M3u8DownloadFactory {
                     String relativeUrl = DOWNLOADURL.substring(0, DOWNLOADURL.lastIndexOf("/") + 1);
                     if (s.startsWith("/"))
                         s = s.replaceFirst("/", "");
-                    keyUrl = mergeUrl(relativeUrl, s);
+                    keyUrl = mergeUrl(relativeUrl, s);//FIXME here need Ref : RFC-3986 ,https://juejin.cn/post/7122375055912206367?share_token=5f066f3c-121e-49a0-ae61-b397b40589e6
+                    //FIXME Ref : https://github.com/google/ExoPlayer/blob/0106f02a25a71321f9948f5aa6fefeb3008e21ca/library/common/src/main/java/com/google/android/exoplayer2/util/UriUtil.java#L69
                     break;
                 }
             }
